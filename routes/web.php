@@ -1,7 +1,25 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+
+// Public routes
 Route::get('/', function () {
- return view('welcome');
+    return view('welcome');
 });
-Route::resource('products', ProductController::class);
+
+// Authentication routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Protected routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+    
+    // Product routes
+    Route::resource('products', ProductController::class);
+});
