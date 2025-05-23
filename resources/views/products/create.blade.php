@@ -13,7 +13,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('products.store') }}" method="post">
+                    <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3 row">
                             <label for="code" class="col-md-4 col-formlabel text-md-end text-start">Code</label>
@@ -74,7 +74,16 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <input type="submit" class="col-md-3 offsetmd-5 btn btn-primary" value="Add Product">
+                            <label for="photo" class="col-md-4 col-form-label text-md-end text-start">Product Photo</label>
+                            <div class="col-md-6">
+                                <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo">
+                                @error('photo')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Product">
                         </div>
                     </form>
                 </div>

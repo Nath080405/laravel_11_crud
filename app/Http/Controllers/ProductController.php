@@ -5,6 +5,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     /**
@@ -26,10 +27,19 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(
-        StoreProductRequest $request
-    ): RedirectResponse {
-        Product::create($request->validated());
+    public function store(StoreProductRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+        
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $photoName = time() . '.' . $photo->getClientOriginalExtension();
+            $path = $photo->storeAs('product-photos', $photoName, 'public');
+            $data['photo'] = $path;
+        }
+
+        Product::create($data);
+        
         return redirect()->route('products.index')
             ->withSuccess('New product is added successfully.');
     }
@@ -50,12 +60,24 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(
-        UpdateProductRequest $request,
-        Product
-        $product
-    ): RedirectResponse {
-        $product->update($request->validated());
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
+    {
+        $data = $request->validated();
+        
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            
+            $photo = $request->file('photo');
+            $photoName = time() . '.' . $photo->getClientOriginalExtension();
+            $path = $photo->storeAs('product-photos', $photoName, 'public');
+            $data['photo'] = $path;
+        }
+
+        $product->update($data);
+        
         return redirect()->back()
             ->withSuccess('Product is updated successfully.');
     }
@@ -64,7 +86,13 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
+        // Delete photo file if exists
+        if ($product->photo) {
+            Storage::disk('public')->delete($product->photo);
+        }
+        
         $product->delete();
+        
         return redirect()->route('products.index')
             ->withSuccess('Product is deleted successfully.');
     }

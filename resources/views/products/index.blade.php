@@ -17,6 +17,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">S#</th>
+                                <th scope="col">Photo</th>
                                 <th scope="col">Code</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Quantity</th>
@@ -26,32 +27,38 @@
                         </thead>
                         <tbody>
                             @forelse ($products as $product)
-                                                        <tr>
-                                                            <th scope="row">{{ $loop->iteration 
-                                }}</th>
-                                                            <td>{{ $product->code }}</td>
-                                                            <td>{{ $product->name }}</td>
-                                                            <td>{{ $product->quantity }}</td>
-                                                            <td>{{ $product->price }}</td>
-                                                            <td>
-                                                                <form action="{{ 
+                                <tr>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>
+                                        @if($product->photo)
+                                            <img src="{{ Storage::url($product->photo) }}" alt="{{ $product->name }}" class="img-thumbnail" style="max-width: 50px;">
+                                        @else
+                                            <span class="text-muted">No photo</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $product->code }}</td>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->quantity }}</td>
+                                    <td>{{ $product->price }}</td>
+                                    <td>
+                                        <form action="{{ 
                                 route('products.destroy', $product->id) }}" method="post">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <a href="{{ route(
-                                        'products.show',
-                                        $product->id
-                                    ) }}" class="btn btn-warning btn-sm"><i class="bi bieye"></i> Show</a>
-                                                                    <a href="{{ route(
-                                        'products.edit',
-                                        $product->id
-                                    ) }}" class="btn btn-primary btn-sm"><i class="bi bipencil-square"></i> Edit</a>
-                                                                    <button type="submit" class="btn 
-                                btn-danger btn-sm" onclick="return confirm('Do you want to delete this 
-                                product?');"><i class="bi bi-trash"></i> Delete</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
+                                            @csrf
+                                            @method('DELETE')
+                                            <a href="{{ route(
+                                            'products.show',
+                                            $product->id
+                                        ) }}" class="btn btn-warning btn-sm"><i class="bi bieye"></i> Show</a>
+                                            <a href="{{ route(
+                                            'products.edit',
+                                            $product->id
+                                        ) }}" class="btn btn-primary btn-sm"><i class="bi bipencil-square"></i> Edit</a>
+                                            <button type="submit" class="btn 
+                                            btn-danger btn-sm" onclick="return confirm('Do you want to delete this 
+                                            product?');"><i class="bi bi-trash"></i> Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
                             @empty
                                 <td colspan="6">
                                     <span class="text-danger">

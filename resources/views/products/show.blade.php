@@ -47,13 +47,20 @@
                     </div>
                     <div class="row">
                         <label for="description"
-                            class="col-md-4 colform-label text-md-end textstart"><strong>Description:</strong></label>
-                        <div class="col-md-6" style="line-height:
-    35px;">
+                            class="col-md-4 col-form-label text-md-end text-start"><strong>Description:</strong></label>
+                        <div class="col-md-6" style="line-height: 35px;">
                             {{ $product->description }}
                         </div>
                     </div>
 
+                    @if($product->photo)
+                    <div class="row mt-3">
+                        <label class="col-md-4 col-form-label text-md-end text-start"><strong>Photo:</strong></label>
+                        <div class="col-md-6">
+                            <img src="{{ Storage::url($product->photo) }}" alt="{{ $product->name }}" class="img-thumbnail" style="max-width: 200px;">
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
